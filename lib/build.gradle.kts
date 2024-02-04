@@ -44,6 +44,7 @@ java {
 
 extra.apply {
     set("kafkaVersion", "7.5.0-ce")
+    set("testcontainersVersion", "1.18.3")
     set("openTracingVersion", "0.33.0")
     set("observabilityVersion", "1.1.8")
     set("guavaVersion", "32.1.2-jre")
@@ -69,17 +70,40 @@ val junitPioneerVersion: String by extra
 val guavaVersion : String by extra
 val hamcrestVersion : String by extra
 val log4jVersion : String by extra
+val testcontainersVersion : String by extra
+val confluentVersion : String by extra
+val kafkaVersion : String by extra
 
 dependencies {
+    api("io.confluent:kafka-schema-registry-client:$confluentVersion")
+    api("io.confluent:kafka-json-schema-provider:$confluentVersion")
+    api("io.confluent:kafka-avro-serializer:$confluentVersion")
+    api("io.confluent:kafka-json-schema-serializer:$confluentVersion")
+    api("io.confluent:kafka-protobuf-provider:$confluentVersion")
+    api("io.confluent:kafka-protobuf-serializer:$confluentVersion")
+    api("io.confluent:kafka-streams-protobuf-serde:$confluentVersion")
+    api("io.confluent:kafka-streams-avro-serde:$confluentVersion")
+    api("com.google.protobuf:protobuf-java:3.24.3")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    api("org.apache.kafka:kafka-streams:$kafkaVersion")
+    api("org.apache.kafka:kafka-clients:$kafkaVersion")
+    implementation("commons-io:commons-io:2.14.0")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
+
+    implementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+    implementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+    implementation("org.testcontainers:testcontainers:$testcontainersVersion")
+    implementation("org.testcontainers:kafka:$testcontainersVersion")
+
+
     api("org.apache.commons:commons-math3:3.6.1")
 
     implementation("com.google.guava:guava:29.0-jre")
+
+
     testImplementation("org.hamcrest:hamcrest-all:1.3")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+
     testImplementation("org.junit-pioneer:junit-pioneer:$junitPioneerVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
     testImplementation("org.hamcrest:hamcrest-all:$hamcrestVersion")
@@ -88,6 +112,7 @@ dependencies {
     testImplementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     testImplementation("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+
 }
 
 tasks.compileJava {
