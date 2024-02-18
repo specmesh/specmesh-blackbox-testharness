@@ -1,6 +1,6 @@
 {
-        "namespace": "ksql",
-        "name": "inventory",
+        "namespace": "london.hammersmith.transport._public.tube",
+        "name": "passenger",
         "type": "record",
         "fields": [
                 {"name": "id", "type": {
