@@ -16,12 +16,11 @@
 
 package io.specmesh.blackbox.testharness.kafka.schema;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /** Test container for the Schema Registry */
 public final class SchemaRegistryContainer extends GenericContainer<SchemaRegistryContainer> {

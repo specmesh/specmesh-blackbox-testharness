@@ -1,5 +1,5 @@
 {
-        "namespace": "london.hammersmith.transport._public.tube",
+        "namespace": "tube.passengers",
         "name": "passenger",
         "type": "record",
         "fields": [

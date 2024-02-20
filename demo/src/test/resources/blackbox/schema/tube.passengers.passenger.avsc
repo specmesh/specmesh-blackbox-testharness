@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "namespace": "tube.passengers",
+  "name": "passenger",
+  "fields": [
+    {"name": "time", "type": "long"},
+    {"name": "id", "type": "long"},
+    {"name": "username", "type": "string"},
+    {"name": "email",  "type": "string"},
+    {"name": "age", "type": "int"}
+  ]
+}

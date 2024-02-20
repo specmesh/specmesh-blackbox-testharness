@@ -1,31 +1,70 @@
 {
-        "namespace": "london.hammersmith.transport._public.tube",
+        "namespace": "tube.passengers",
         "name": "passenger",
         "type": "record",
         "fields": [
+                {"name": "time", "type": {
+                  "type": "long",
+                  "arg.properties": {
+                        "range": {
+                            "min": 1708361169666,
+                            "max": 1708361179666
+                        }
+                  }
+                }},
                 {"name": "id", "type": {
                     "type": "long",
                     "arg.properties": {
-                        "iteration": {
-                            "start": 0
+                        "range": {
+                            "min": 100,
+                            "max": 200
                         }
+                  }                }},
+                  {"name": "username", "type": {
+                    "type": "string",
+                    "arg.properties": {
+                      "options": [
+                        "akatz1022",
+                        "bobk_43",
+                        "alison_99",
+                        "k_robertz_88",
+                        "Ferd88",
+                        "Reeva43",
+                        "Antonio_0966",
+                        "ArlyneW8ter",
+                        "DimitriSchenz88",
+                        "Oriana_70",
+                        "AbdelKable_86",
+                        "Roberto_123",
+                        "AlanGreta_GG66",
+                        "Nathan_126",
+                        "AndySims_345324",
+                        "GlenAlan_23344",
+                        "LukeWaters_23",
+                        "BenSteins_235"
+
+                      ]
                     }
+                  }},
+                {"name": "email", "type": {
+                    "type": "string",
+                    "arg.properties": {
+                         "options": [
+                           "BOB.B@gmail.com",
+                           "MARY.M@gmail.com",
+                           "LIONEL.Y@gmail.com",
+                           "SUE.P@gmail.com"
+                         ]
+                       }
                 }},
-                {"name": "quantity", "type": {
+                {"name": "age", "type": {
                     "type": "long",
                     "arg.properties": {
-                        "iteration": {
-                            "start": 0
+                        "range": {
+                            "min": 20,
+                            "max": 50
                         }
                     }
-                }},
-                {"name": "productid", "type": {
-                    "type": "long",
-                    "arg.properties": {
-                      "iteration": {
-                          "start": 0
-                      }
-                    }
-                 }}
+                }}
         ]
 }
