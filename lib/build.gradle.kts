@@ -14,7 +14,7 @@ plugins {
     id("pl.allegro.tech.build.axion-release") version "1.15.5"
 
 }
-group = "io.specmesh.blackbox.testharness"
+group = "io.specmesh"
 version = "0.0.1"
 
 repositories {
@@ -43,6 +43,8 @@ java {
 }
 
 extra.apply {
+    set("specmeshVersion", "0.8.2")
+    set("specmeshDataGenVersion", "0.5.3")
     set("kafkaVersion", "7.5.0-ce")
     set("testcontainersVersion", "1.18.3")
     set("openTracingVersion", "0.33.0")
@@ -57,12 +59,14 @@ extra.apply {
     set("junitPioneerVersion", "2.1.0")
     set("spotBugsVersion", "4.7.3")
     set("hamcrestVersion", "1.3")
-    set("log4jVersion", "2.20.0")           // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+    set("log4jVersion", "2.22.1")           // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
     set("classGraphVersion", "4.8.21")
     set("testcontainersVersion", "1.18.3")
     set("lombokVersion", "1.18.30")
 }
 
+val specmeshVersion: String by extra
+val specmeshDataGenVersion: String by extra
 val junitVersion: String by extra
 val jacksonVersion: String by extra
 val mockitoVersion: String by extra
@@ -74,7 +78,19 @@ val testcontainersVersion : String by extra
 val confluentVersion : String by extra
 val kafkaVersion : String by extra
 
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.slf4j" && requested.name == "slf4j-api") {
+            useVersion("2.0.9")
+        }
+    }
+}
 dependencies {
+
+    api("io.specmesh:specmesh-cli:$specmeshVersion")
+    api("io.specmesh:specmesh-kafka:$specmeshVersion")
+    api("io.specmesh:kafka-random-generator:$specmeshDataGenVersion")
+
     api("io.confluent:kafka-schema-registry-client:$confluentVersion")
     api("io.confluent:kafka-json-schema-provider:$confluentVersion")
     api("io.confluent:kafka-avro-serializer:$confluentVersion")
@@ -93,7 +109,9 @@ dependencies {
 
     implementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     implementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-    implementation("org.testcontainers:testcontainers:$testcontainersVersion")
+    implementation("org.testcontainers:testcontainers:$testcontainersVersion") {
+        exclude(group = "org.slf4j", module = "slf4j-api")
+    }
     implementation("org.testcontainers:kafka:$testcontainersVersion")
 
 
@@ -109,8 +127,8 @@ dependencies {
     testImplementation("org.hamcrest:hamcrest-all:$hamcrestVersion")
     testImplementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
     testImplementation("com.google.guava:guava-testlib:$guavaVersion")
-    testImplementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
-    testImplementation("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
+//    testImplementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
+//    testImplementation("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 
 }

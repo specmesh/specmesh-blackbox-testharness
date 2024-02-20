@@ -1,6 +1,6 @@
 {
-        "namespace": "ksql",
-        "name": "inventory",
+        "namespace": "simple.schema_demo._public.user_signed_up",
+        "name": "user_signed_up",
         "type": "record",
         "fields": [
                 {"name": "id", "type": {

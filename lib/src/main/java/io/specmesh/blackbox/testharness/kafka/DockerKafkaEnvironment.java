@@ -16,22 +16,10 @@
 
 package io.specmesh.blackbox.testharness.kafka;
 
-import io.specmesh.blackbox.testharness.kafka.schema.SchemaRegistryContainer;
-import org.apache.kafka.clients.admin.Admin;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.common.acl.AclBinding;
-import org.apache.kafka.common.config.SaslConfigs;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.containers.Network;
-import org.testcontainers.lifecycle.Startable;
-import org.testcontainers.utility.DockerImageName;
+import static java.util.Objects.requireNonNull;
 
+import io.specmesh.blackbox.testharness.kafka.clients.Clients;
+import io.specmesh.blackbox.testharness.kafka.schema.SchemaRegistryContainer;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,8 +34,20 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
-
-import static java.util.Objects.requireNonNull;
+import org.apache.kafka.clients.admin.Admin;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.common.acl.AclBinding;
+import org.apache.kafka.common.config.SaslConfigs;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.containers.Network;
+import org.testcontainers.lifecycle.Startable;
+import org.testcontainers.utility.DockerImageName;
 
 /**
  * A test utility for bringing up Kafka and Schema Registry Docker containers.

@@ -1,6 +1,6 @@
 {
-        "namespace": "ksql",
-        "name": "inventory",
+        "namespace": "tube.passengers",
+        "name": "passenger",
         "type": "record",
         "fields": [
                 {"name": "id", "type": {

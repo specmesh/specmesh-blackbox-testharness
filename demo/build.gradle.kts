@@ -13,6 +13,15 @@ repositories {
     }
 }
 
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.slf4j" && requested.name == "slf4j-api") {
+            useVersion("2.0.9")
+        }
+    }
+    exclude(group = "ch.qos.logback", module = "logback-classic")
+}
+
 dependencies {
     implementation(project(":lib"))
     testImplementation(platform("org.junit:junit-bom:5.9.1"))

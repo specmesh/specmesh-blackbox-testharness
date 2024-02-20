@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-package io.specmesh.blackbox.testharness.kafka;
+package io.specmesh.blackbox.testharness.kafka.clients;
 
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientConfig;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
-import org.apache.kafka.clients.admin.Admin;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.security.plain.PlainLoginModule;
-import org.apache.kafka.streams.StreamsConfig;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +30,15 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.apache.kafka.clients.admin.Admin;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.security.plain.PlainLoginModule;
+import org.apache.kafka.streams.StreamsConfig;
 
 /** Factory for Kafka clients */
 public final class Clients {
@@ -130,7 +129,7 @@ public final class Clients {
      * @return true if principal was set
      */
     private static boolean isPrincipalSpecified(final String principal) {
-        return principal != null && principal.length() > 0;
+        return principal != null && !principal.isEmpty();
     }
 
     private static String buildJaasConfig(final String userName, final String password) {
