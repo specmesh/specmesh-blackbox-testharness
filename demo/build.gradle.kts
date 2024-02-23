@@ -21,12 +21,19 @@ configurations.all {
     }
     exclude(group = "ch.qos.logback", module = "logback-classic")
 }
+val lombokVersion = "1.18.30"
+
 
 dependencies {
     implementation(project(":lib"))
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
+    compileOnly("org.projectlombok:lombok:$lombokVersion")
+    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+    testCompileOnly("org.projectlombok:lombok:$lombokVersion")
+    testAnnotationProcessor("org.projectlombok:lombok:$lombokVersion")
+
 }
 
 tasks.test {

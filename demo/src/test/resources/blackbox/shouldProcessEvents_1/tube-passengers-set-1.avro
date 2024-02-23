@@ -1,0 +1,108 @@
+{
+    "namespace": "tube.passengers",
+    "name": "passenger",
+    "type": "record",
+    "fields": [
+        {
+            "name": "id",
+            "type": "int"
+        },
+        {
+            "name": "time",
+             "type": "long"
+        },
+        {
+            "name": "username",
+            "type": "string"
+        },
+        {
+            "name": "email",
+            "type": "string"
+        },
+        {
+            "name": "age",
+            "type": "int"
+        }
+    ],
+    "arg.properties": {
+        "options": [
+            {
+                "id": 1000,
+                "time": 1708361169666,
+                "username": "Carleton B",
+                "email": "carl.bxcqn@mycompany.com",
+                "age": 32
+            },
+            {
+                "id": 1001,
+                "time": 1708361169666,
+                "username": "Frieda S",
+                "age": 42,
+                "email": "frieda.ymcw@mycompany.com"
+            },
+            {
+                "id": 1002,
+                "time": 1708361169666,
+                "username": "Trumann H",
+                "age": 38,
+                "email": "t.h-zkth@mycompany.com"
+            },
+            {
+                "id": 1003,
+                "time": 1708361169666,
+                "username": "Zeb M",
+                "age": 46,
+                "email": "zeb-m.yfxw@mycompany.com"
+            },
+            {
+                "id": 1004,
+                "time": 1708361169666,
+                "username": "Hayley B",
+                "age": 49,
+                "email": "h.b-ireg@mycompany.com"
+            },
+            {
+                "id": 1005,
+                "time": 1708361169666,
+                "username": "Nolan H",
+                "age": 47,
+                "email": "n.hkzvq@mycompany.com"
+            },
+            {
+                "id": 1006,
+                "time": 1708361169666,
+                "username": "Frieda Joblin",
+                "age": 46,
+                "email": "frieda.tauo@mycompany.com"
+            },
+            {
+                "id": 1007,
+                "time": 1708361169666,
+                "username": "Kalila Foulsham",
+                "age": 46,
+                "email": "kalila.gexc@mycompany.com"
+            },
+            {
+                "id": 1008,
+                "time": 1708361169666,
+                "username": "Nolan Rosensaft",
+                "age": 38,
+                "email": "nolan.ryny@mycompany.com"
+            },
+            {
+                "id": 1009,
+                "time": 1708361169666,
+                "username": "Isadora Ravenscroft",
+                "age": 33,
+                "email": "issy.haad@mycompany.com"
+            },
+            {
+                "id": 1010,
+                "time": 1708361169666,
+                "username": "Byrann Gylnn",
+                "age": 39,
+                "email": "brainy.glyn.hgxz@mycompany.com"
+            }
+        ]
+    }
+}
