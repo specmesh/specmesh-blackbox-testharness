@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tube.passengers;
+package user_signed_up_value;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,40 +25,38 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.common.serialization.Serde;
 import org.example.AvroSerde;
 
-import java.util.Map;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(fluent = true)
 @Builder
-public class Passenger {
+public class UserSignedUp {
     private int id;
     private long time;
-    private String username;
+    private String fullName;
     private String email;
     private int age;
 
-    public static Serde<Passenger> serde() {
+    public static Serde<UserSignedUp> serde() {
         return new AvroSerde<>() {
             @Override
-            protected Passenger convert(Object genericRecordMaybe) {
+            protected UserSignedUp convert(final Object genericRecordMaybe) {
                 if (genericRecordMaybe instanceof GenericRecord record) {
-                    return Passenger.builder()
-                            // avro parser limitation on 'int's from json (need to modify ObjectMapper)
+                    return UserSignedUp.builder()
+                            // avro parser limitation on 'int's' interp is borked
+                            // (would need to modify ObjectMapper with custom serializer)
                             .id(((Long) record.get("id")).intValue())
                             .time((Long) record.get("time"))
-                            .username(record.get("username").toString())
+                            .fullName(record.get("username").toString())
                             .email(record.get("email").toString())
                             .age((Integer) record.get("age"))
                             .build();
-                } else if (genericRecordMaybe instanceof Passenger) {
-                    return (Passenger) genericRecordMaybe;
+                } else if (genericRecordMaybe instanceof UserSignedUp) {
+                    return (UserSignedUp) genericRecordMaybe;
                 } else {
                     throw new RuntimeException("Unexpected Object:" + genericRecordMaybe);
                 }
             }
         };
-
     }
 }

@@ -1,19 +1,23 @@
 package org.example;
 
 import io.confluent.kafka.schemaregistry.ParsedSchema;
+import io.confluent.kafka.schemaregistry.SchemaProvider;
+import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider;
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+import io.confluent.kafka.schemaregistry.json.JsonSchemaProvider;
+import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import io.specmesh.avro.random.generator.API;
 import io.specmesh.blackbox.testharness.kafka.DockerKafkaEnvironment;
 import io.specmesh.blackbox.testharness.kafka.KafkaEnvironment;
-import io.specmesh.blackbox.testharness.kafka.clients.Clients;
 import io.specmesh.cli.Provision;
 import io.specmesh.kafka.provision.Status;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
-import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,12 +26,14 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 
 class MainTest {
 
@@ -51,44 +57,77 @@ class MainTest {
     @Test
     void doThings() throws Exception {
 
-        generateSeedData(provisionSeedData());
+        final int count = 100;
+
+        generateSeedData(
+                provisionSpec("build/resources/test/blackbox/seed/tube-passengers-api.yml",
+                        "build/resources/test/blackbox"),
+                count);
+
+        provisionSpec("build/resources/test/blackbox/simple_schema_demo-api.yml",
+                "build/resources/test/blackbox");
 
 
-        int result = new Main().doThings();
-        assertThat(result, is(1));
 
+        // Test produce/consume
+        int result = new Main().doThings(KAFKA_ENV.kafkaBootstrapServers(), KAFKA_ENV.schemeRegistryServer());
+        assertThat(result, is(count));
+
+        // sanity check schemas
+        sanityCheckSchemaCreation();
     }
 
-    private static void generateSeedData(final Status status) throws IOException {
-        final var topicName = status.topics().iterator().next().name();
-        final var schema = status.schemas().iterator().next().getSchema();
-
-        final var api = new API(100, "username", Files.readString(Paths.get(
-                "build/resources/test/blackbox/shouldProcessEvents_1/tube-passengers.avro")));
-
-        try (var producer = avroProducer("tube.passengers", "admin")) {
-            api.run((key, genericRecord) -> {
+    private static void sanityCheckSchemaCreation() throws IOException, RestClientException {
+        try (final var srClient = Clients.srClient(KAFKA_ENV.schemeRegistryServer())) {
+            Collection<String> allSubjects = srClient.getAllSubjects();
+            assertThat("Should be 2 schemas in 2 subjects", allSubjects, hasSize(2));
+            allSubjects.forEach(subject -> {
                 try {
-                    final var recordMetadata = producer.send(
-                                    new ProducerRecord<>(topicName,
-                                            (String) key, cloneUsingOriginalSchema(genericRecord, schema)))
-                            .get(5, TimeUnit.SECONDS);
-                    System.out.println("Partition:" + recordMetadata.partition());
-                } catch (Exception e) {
+                    List<Integer> allVersions = srClient.getAllVersions(subject);
+                    System.out.println("Schemas:" + subject + " versions:" + allVersions);
+                    assertThat("Should be 1 version of each schema", allVersions, hasSize(1));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (RestClientException e) {
                     throw new RuntimeException(e);
                 }
             });
         }
     }
 
-    private static Status provisionSeedData() throws Exception {
+    private static void generateSeedData(final Status status, final int count) throws IOException {
+        final var topicName = status.topics().iterator().next().name();
+        final var schema = status.schemas().iterator().next().getSchema();
+
+        final var api = new API(count, "id", Files.readString(Paths.get(
+                "build/resources/test/blackbox/shouldProcessEvents_1/tube-passengers-set-1.avro")));
+
+        try (var producer = org.example.Clients
+                .avroProducer(KAFKA_ENV.kafkaBootstrapServers(), KAFKA_ENV.schemeRegistryServer(),
+                        "tube.passengers", "admin", new IntegerSerializer(),
+                        GenericRecord.class, new KafkaAvroSerializer(), java.util.Map.of())
+        ){
+            api.run((key, genericRecord) -> {
+                try {
+                    producer.send(
+                                    new ProducerRecord<>(topicName,
+                                            (Integer) key, genericRecord))
+                            .get(5, TimeUnit.SECONDS);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            producer.flush();
+        }
+    }
+
+    private static Status provisionSpec(final String spec, final String schemaPath) throws Exception {
         final var provision = Provision.builder()
                 .brokerUrl(KAFKA_ENV.kafkaBootstrapServers())
-                .aclDisabled(false)
                 .username(OWNER_USER)
                 .secret(OWNER_USER + "-secret")
-                .spec("build/resources/test/blackbox/seed/tube-passengers-api.yml")
-                .schemaPath("build/resources/test/blackbox")
+                .spec(spec)
+                .schemaPath(schemaPath)
                 .schemaRegistryUrl(KAFKA_ENV.schemeRegistryServer())
                 .build();
         provision.call();
@@ -100,41 +139,4 @@ class MainTest {
         return status;
     }
 
-    private static GenericData.Record cloneUsingOriginalSchema(final GenericRecord genericRecord, final ParsedSchema schema) {
-        final var record = new GenericData.Record((Schema) schema.rawSchema());
-        final var fields = genericRecord.getSchema().getFields();
-        fields.forEach(field -> record.put(field.name(), genericRecord.get(field.name())));
-        return record;
-    }
-
-    private static Producer<String, GenericRecord> avroProducer(final String domainId, final String user) {
-
-        return producer(domainId, GenericRecord.class, KafkaAvroSerializer.class, user,
-                Map.of(
-                // change for common data types
-                // "value.subject.name.strategy", "io.confluent.kafka.serializers.subject.RecordNameStrategy",
-                        "schema.reflection", "false"));
-    }
-
-    private static <V> Producer<String, V> producer(
-            final String domainId,
-            final Class<V> valueClass,
-            final Class<?> valueSerializer,
-            final String userName,
-            final Map<String, Object> additionalProps) {
-        final Map<String, Object> props =
-                Clients.producerProperties(
-                        domainId,
-                        UUID.randomUUID().toString(),
-                        KAFKA_ENV.kafkaBootstrapServers(),
-                        KAFKA_ENV.schemeRegistryServer(),
-                        StringSerializer.class,
-                        valueSerializer,
-                        false,
-                        additionalProps);
-
-        props.putAll(Clients.clientSaslAuthProperties(userName, userName + "-secret"));
-
-        return Clients.producer(String.class, valueClass, props);
-    }
 }
