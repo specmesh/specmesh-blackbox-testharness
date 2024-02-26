@@ -15,9 +15,6 @@
  */
 package org.example;
 
-import io.confluent.kafka.schemaregistry.SchemaProvider;
-import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider;
-import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -32,14 +29,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Clients {
-
-    public static CachedSchemaRegistryClient srClient(final String srUrl) {
-        final List<SchemaProvider> providers =
-                List.of(
-                        new AvroSchemaProvider()
-                );
-        return new CachedSchemaRegistryClient(srUrl, 5, providers, Map.of());
-    }
 
     public static <K, V> Consumer<K, V> avroConsumer(
             String domainId, String bootstrap, String srUrl, final String topicName, final String userName,

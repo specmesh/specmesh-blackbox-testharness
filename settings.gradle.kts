@@ -8,7 +8,7 @@
  */
 
 rootProject.name = "specmesh-blackbox-testharness"
-include("lib", "demo")
+include("lib", "demo-test-containers-simple")
 //rootProject.name = 'your-project'
 //
 //include 'java-library-module', 'java-application-module'

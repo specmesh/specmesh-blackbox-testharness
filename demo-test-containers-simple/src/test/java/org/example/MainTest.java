@@ -1,20 +1,12 @@
 package org.example;
 
-import io.confluent.kafka.schemaregistry.ParsedSchema;
-import io.confluent.kafka.schemaregistry.SchemaProvider;
-import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider;
-import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
-import io.confluent.kafka.schemaregistry.json.JsonSchemaProvider;
-import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import io.specmesh.avro.random.generator.API;
 import io.specmesh.blackbox.testharness.kafka.DockerKafkaEnvironment;
 import io.specmesh.blackbox.testharness.kafka.KafkaEnvironment;
 import io.specmesh.cli.Provision;
 import io.specmesh.kafka.provision.Status;
-import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.IntegerSerializer;
@@ -28,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -78,7 +69,7 @@ class MainTest {
     }
 
     private static void sanityCheckSchemaCreation() throws IOException, RestClientException {
-        try (final var srClient = Clients.srClient(KAFKA_ENV.schemeRegistryServer())) {
+        try (final var srClient = io.specmesh.blackbox.testharness.kafka.clients.Clients.srClient(KAFKA_ENV.schemeRegistryServer())) {
             Collection<String> allSubjects = srClient.getAllSubjects();
             assertThat("Should be 2 schemas in 2 subjects", allSubjects, hasSize(2));
             allSubjects.forEach(subject -> {
@@ -86,9 +77,7 @@ class MainTest {
                     List<Integer> allVersions = srClient.getAllVersions(subject);
                     System.out.println("Schemas:" + subject + " versions:" + allVersions);
                     assertThat("Should be 1 version of each schema", allVersions, hasSize(1));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (RestClientException e) {
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             });
