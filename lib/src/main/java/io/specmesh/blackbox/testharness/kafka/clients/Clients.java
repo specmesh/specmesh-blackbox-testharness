@@ -16,6 +16,7 @@
 
 package io.specmesh.blackbox.testharness.kafka.clients;
 
+import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientConfig;
@@ -24,11 +25,7 @@ import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.Admin;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -142,23 +139,20 @@ public final class Clients {
                 + "\";";
     }
 
-    public static Optional<SchemaRegistryClient> schemaRegistryClient(
-            final boolean srEnabled,
-            final String schemaRegistryUrl,
-            final String srApiKey,
-            final String srApiSecret) {
-        if (srEnabled && schemaRegistryUrl != null) {
-            final Map<String, Object> properties = new HashMap<>();
-            if (srApiKey != null) {
-                properties.put(
-                        SchemaRegistryClientConfig.BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO");
-                properties.put(
-                        SchemaRegistryClientConfig.USER_INFO_CONFIG, srApiKey + ":" + srApiSecret);
-            }
-            return Optional.of(new CachedSchemaRegistryClient(schemaRegistryUrl, 5, properties));
-        } else {
-            return Optional.empty();
+    public static SchemaRegistryClient srClient(final String srUrl) {
+        return srClient(srUrl, null, null);
+    }
+
+    public static SchemaRegistryClient srClient(
+            final String srUrl, final String srApiKey, final String srApiSecret) {
+        final Map<String, Object> properties = new HashMap<>();
+        if (srApiKey != null) {
+            properties.put(SchemaRegistryClientConfig.BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO");
+            properties.put(
+                    SchemaRegistryClientConfig.USER_INFO_CONFIG, srApiKey + ":" + srApiSecret);
         }
+        return new CachedSchemaRegistryClient(
+                srUrl, 5, List.of(new AvroSchemaProvider()), properties);
     }
 
     /**
