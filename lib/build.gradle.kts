@@ -25,6 +25,17 @@ repositories {
     }
 
 }
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.slf4j" && requested.name == "slf4j-api") {
+            useVersion("2.0.9")
+        }
+        if (requested.group == "org.apache.avro" && requested.name == "avro") {
+            useVersion("1.11.3")
+        }
+    }
+    exclude(group = "ch.qos.logback", module = "logback-classic")
+}
 
 
 tasks.test {
@@ -43,14 +54,14 @@ java {
 }
 
 extra.apply {
-    set("specmeshVersion", "0.8.2")
+    set("specmeshVersion", "0.9.0")
     set("specmeshDataGenVersion", "0.5.3")
-    set("kafkaVersion", "7.5.0-ce")
+    set("kafkaVersion", "7.5.3-ce")
+    set("confluentVersion", "7.5.3")
     set("testcontainersVersion", "1.18.3")
     set("openTracingVersion", "0.33.0")
     set("observabilityVersion", "1.1.8")
     set("guavaVersion", "32.1.2-jre")
-    set("confluentVersion", "7.5.0")
     set("jacksonVersion", "2.15.2")
     set("protobufVersion", "3.24.3")
     set("medeiaValidatorVersion", "1.1.0")
@@ -117,7 +128,7 @@ dependencies {
 
     api("org.apache.commons:commons-math3:3.6.1")
 
-    implementation("com.google.guava:guava:29.0-jre")
+    implementation("com.google.guava:guava:33.0.0-jre")
 
 
     testImplementation("org.hamcrest:hamcrest-all:1.3")

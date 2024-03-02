@@ -1,0 +1,29 @@
+{
+  "type": "record",
+  "name": "Trade",
+  "namespace": "com.example.trading",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "name": "detail",
+      "type": "string"
+    },
+    {
+      "name": "currency",
+      "type": "com.example.shared.Currency"
+    }
+
+    //    {
+//      "name": "currency",
+//      "type": {
+//        "type": "record",
+//        "name": "Currency",
+//        "namespace": "com.example.shared",
+//        "fields": []
+//      }
+//    }
+  ]
+}
