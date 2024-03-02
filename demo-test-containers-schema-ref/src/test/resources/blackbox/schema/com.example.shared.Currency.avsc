@@ -1,0 +1,9 @@
+{
+  "type": "record",
+  "name": "Currency",
+  "namespace": "com.example.shared",
+  "fields": [
+    { "name": "symbol", "type": "string" },
+    { "name": "amount", "type": "double" }
+  ]
+}

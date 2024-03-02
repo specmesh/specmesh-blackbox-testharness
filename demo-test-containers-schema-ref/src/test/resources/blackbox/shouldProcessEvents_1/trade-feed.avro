@@ -1,0 +1,46 @@
+{
+    "namespace": "com.example.trading",
+    "name": "Trade",
+    "type": "record",
+     "fields": [
+       {"name": "id", "type": "string"},
+       {"name": "detail", "type": "string"},
+       {
+         "name": "currency",
+         "type": {
+           "type": "record",
+           "name": "Currency",
+           "namespace": "com.example.shared"
+         }
+       }
+    "arg.properties": {
+        "options": [
+            {
+                "id": "123",
+                "detail": "executed",
+                "currency": {
+                    "symbol": "GBPUSD",
+                    "amount": 99.5
+                }
+            },
+            {
+                "id": "456",
+                "detail": "cancelled",
+                "currency": {
+                    "symbol": "EURUSD",
+                    "amount": 99.5
+                }
+            },
+            {
+                "id": "789",
+                "detail": "preflight",
+                "currency": {
+                    "symbol": "AUDUSD",
+                    "amount": 0.56
+                }
+            },
+
+
+        ]
+    }
+}

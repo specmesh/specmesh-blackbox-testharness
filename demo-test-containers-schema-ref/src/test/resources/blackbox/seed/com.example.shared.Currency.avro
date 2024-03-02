@@ -1,0 +1,29 @@
+{
+    "namespace": "common.example.shared",
+    "name": "Currency",
+    "type": "record",
+    "fields": [
+            { "name": "symbol", "type": "string" },
+            { "name": "amount", "type": "double" }
+    ],
+    "arg.properties": {
+        "options": [
+            {
+                "symbol": "GBP/USD",
+                "amount": 1.27
+            },
+            {
+                "symbol": "USD/GBP",
+                "amount": 99.5
+            },
+            {
+                "symbol": "AUD/USD",
+                "amount": 0.56
+            },
+            {
+                "symbol": "EUR/USD",
+                "amount": 0.80
+            }
+        ]
+    }
+}

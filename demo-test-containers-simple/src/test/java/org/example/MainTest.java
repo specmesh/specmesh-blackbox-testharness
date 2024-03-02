@@ -86,7 +86,6 @@ class MainTest {
 
     private static void generateSeedData(final Status status, final int count) throws IOException {
         final var topicName = status.topics().iterator().next().name();
-        final var schema = status.schemas().iterator().next().getSchema();
 
         final var api = new API(count, "id", Files.readString(Paths.get(
                 "build/resources/test/blackbox/shouldProcessEvents_1/tube-passengers-set-1.avro")));
