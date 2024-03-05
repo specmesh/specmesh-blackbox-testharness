@@ -54,7 +54,7 @@ java {
 }
 
 extra.apply {
-    set("specmeshVersion", "0.9.0")
+    set("specmeshVersion", "0.9.2")
     set("specmeshDataGenVersion", "0.5.3")
     set("kafkaVersion", "7.5.3-ce")
     set("confluentVersion", "7.5.3")
