@@ -18,6 +18,10 @@ package io.specmesh.blackbox.testharness.kafka;
 
 import static java.util.Objects.requireNonNull;
 
+import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider;
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.json.JsonSchemaProvider;
+import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
 import io.specmesh.blackbox.testharness.kafka.clients.Clients;
 import io.specmesh.blackbox.testharness.kafka.schema.SchemaRegistryContainer;
 import java.time.Duration;
@@ -472,4 +476,15 @@ public final class DockerKafkaEnvironment
             this.password = requireNonNull(password, "password");
         }
     }
+    public CachedSchemaRegistryClient srClient() {
+        return new CachedSchemaRegistryClient(
+                schemeRegistryServer(),
+                5,
+                List.of(
+                        new ProtobufSchemaProvider(),
+                        new AvroSchemaProvider(),
+                        new JsonSchemaProvider()),
+                Map.of());
+    }
+
 }

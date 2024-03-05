@@ -145,7 +145,9 @@ class SchemaRefTest {
         try (var producer = Clients
                 .avroProducer(KAFKA_ENV.kafkaBootstrapServers(), KAFKA_ENV.schemeRegistryServer(),
                         "com.example.trading", "admin", new StringSerializer(),
-                        GenericRecord.class, new KafkaAvroSerializer(), java.util.Map.of())
+                        GenericRecord.class, new KafkaAvroSerializer(), java.util.Map.of(
+                                KafkaAvroSerializerConfig.VALUE_SUBJECT_NAME_STRATEGY, "io.confluent.kafka.serializers.subject.RecordNameStrategy"
+                        ))
         ){
             api.run((key, genericRecord) -> {
                 try {

@@ -1,5 +1,5 @@
 {
-    "namespace": "common.example.shared",
+    "namespace": "com.example.shared",
     "name": "Currency",
     "type": "record",
     "fields": [
