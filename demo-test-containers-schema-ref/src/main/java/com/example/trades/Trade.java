@@ -17,6 +17,7 @@
 package com.example.trades;
 
 import common.example.shared.Currency;
+import io.specmesh.blackbox.testharness.kafka.clients.AvroSerde;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,12 +38,15 @@ public class Trade {
     public static AvroSerde<Trade> serde() {
         return new AvroSerde<>() {
             @Override
-            protected Trade convert(final Object genericRecordMaybe) {
-                if (genericRecordMaybe instanceof GenericRecord record) {
+            public Trade convert(final Object genericRecordMaybe) {
+                if (genericRecordMaybe instanceof GenericRecord) {
+                    GenericRecord record = (GenericRecord) genericRecordMaybe;
                     return Trade.builder()
                             .id(record.get("id").toString())
                             .detail(record.get("detail").toString())
-                            .currency(((AvroSerde<Currency>) Currency.serde()).convert(record.get("currency")))
+                            .currency(
+                                    ((AvroSerde<Currency>) Currency.serde())
+                                            .convert(record.get("currency")))
                             .build();
                 } else if (genericRecordMaybe instanceof Trade) {
                     return (Trade) genericRecordMaybe;

@@ -16,6 +16,7 @@
 
 package tube.passengers;
 
+import io.specmesh.blackbox.testharness.kafka.clients.AvroSerde;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +24,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.common.serialization.Serde;
-import org.example.AvroSerde;
 
 @Data
 @AllArgsConstructor
@@ -40,8 +40,9 @@ public class Passenger {
     public static Serde<Passenger> serde() {
         return new AvroSerde<>() {
             @Override
-            protected Passenger convert(Object genericRecordMaybe) {
-                if (genericRecordMaybe instanceof GenericRecord record) {
+            public Passenger convert(Object genericRecordMaybe) {
+                if (genericRecordMaybe instanceof GenericRecord) {
+                    GenericRecord record = (GenericRecord) genericRecordMaybe;
                     return Passenger.builder()
                             // avro parser limitation on 'int's from json (need to modify ObjectMapper)
                             .id(((Long) record.get("id")).intValue())

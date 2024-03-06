@@ -124,6 +124,4 @@ public class Clients {
         valueSerializer.configure(props, false);
         return new KafkaProducer<>(props, keySerializer, (Serializer<V>) valueSerializer);
     }
-
-
 }
