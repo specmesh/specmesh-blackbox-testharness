@@ -88,7 +88,7 @@ subprojects {
         set("specmeshDataGenVersion", "0.5.3")
         set("kafkaVersion", "7.5.3-ce")
         set("confluentVersion", "7.5.3")
-        set("testcontainersVersion", "1.18.3")
+        set("testcontainersVersion", "1.19.7")
         set("openTracingVersion", "0.33.0")
         set("observabilityVersion", "1.1.8")
         set("guavaVersion", "32.1.2-jre")
@@ -105,7 +105,7 @@ subprojects {
             "2.22.1"
         )           // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
         set("classGraphVersion", "4.8.21")
-        set("testcontainersVersion", "1.18.3")
+        set("testcontainersVersion", "1.19.7")
         set("lombokVersion", "1.18.30")
     }
 
