@@ -91,7 +91,7 @@ subprojects {
         set("testcontainersVersion", "1.18.3")
         set("openTracingVersion", "0.33.0")
         set("observabilityVersion", "1.1.8")
-        set("guavaVersion", "32.1.2-jre")
+        set("guavaVersion", "33.0.0-jre")
         set("jacksonVersion", "2.15.2")
         set("protobufVersion", "3.24.3")
         set("medeiaValidatorVersion", "1.1.0")
