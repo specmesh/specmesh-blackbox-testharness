@@ -9,6 +9,3 @@
 
 rootProject.name = "specmesh-blackbox-testharness"
 include("lib", "demo-test-containers-simple", "demo-test-containers-schema-ref")
-//rootProject.name = 'your-project'
-//
-//include 'java-library-module', 'java-application-module'

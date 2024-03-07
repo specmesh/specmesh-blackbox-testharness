@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package user_signed_up_value;
+package user.signedupvalue;
 
+import io.specmesh.blackbox.testharness.kafka.clients.AvroSerde;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +24,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.common.serialization.Serde;
-import org.example.AvroSerde;
 
 @Data
 @AllArgsConstructor
@@ -40,8 +40,9 @@ public class UserSignedUp {
     public static Serde<UserSignedUp> serde() {
         return new AvroSerde<>() {
             @Override
-            protected UserSignedUp convert(final Object genericRecordMaybe) {
-                if (genericRecordMaybe instanceof GenericRecord record) {
+            public UserSignedUp convert(final Object genericRecordMaybe) {
+                if (genericRecordMaybe instanceof GenericRecord) {
+                    final var record = (GenericRecord) genericRecordMaybe;
                     return UserSignedUp.builder()
                             // avro parser limitation on 'int's' interp is borked
                             // (would need to modify ObjectMapper with custom serializer)

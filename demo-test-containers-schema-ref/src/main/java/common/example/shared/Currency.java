@@ -16,6 +16,7 @@
 
 package common.example.shared;
 
+import io.specmesh.blackbox.testharness.kafka.clients.AvroSerde;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +24,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.common.serialization.Serde;
-import com.example.trades.AvroSerde;
 
 @Data
 @AllArgsConstructor
@@ -37,8 +37,9 @@ public class Currency {
     public static Serde<Currency> serde() {
         return new AvroSerde<>() {
             @Override
-            public Currency convert(Object genericRecordMaybe) {
-                if (genericRecordMaybe instanceof GenericRecord record) {
+            public Currency convert(final Object genericRecordMaybe) {
+                if (genericRecordMaybe instanceof GenericRecord) {
+                    final var record = (GenericRecord) genericRecordMaybe;
                     return Currency.builder()
                             .symbol(record.get("symbol").toString())
                             .amount((Double) record.get("amount"))
@@ -50,6 +51,5 @@ public class Currency {
                 }
             }
         };
-
     }
 }
