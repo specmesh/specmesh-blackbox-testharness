@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package org.example;
+package io.specmesh.blackbox;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-import com.example.trades.Main;
-import com.example.trades.Trade;
-import common.example.shared.Currency;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Metadata;
 import io.confluent.kafka.schemaregistry.client.rest.entities.RuleSet;
@@ -31,6 +28,7 @@ import io.confluent.kafka.schemaregistry.client.rest.entities.SchemaReference;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 import io.specmesh.avro.random.generator.API;
+import io.specmesh.blackbox.example.shared.Currency;
 import io.specmesh.blackbox.testharness.kafka.DockerKafkaEnvironment;
 import io.specmesh.blackbox.testharness.kafka.KafkaEnvironment;
 import io.specmesh.blackbox.testharness.kafka.clients.TestClients;

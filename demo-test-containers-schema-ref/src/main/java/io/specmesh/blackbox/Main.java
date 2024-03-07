@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.example.trades;
+package io.specmesh.blackbox;
 
-import common.example.shared.Currency;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.specmesh.blackbox.example.shared.Currency;
 import io.specmesh.blackbox.testharness.kafka.clients.TestClients;
 import java.time.Duration;
 import java.util.Map;

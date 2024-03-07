@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package tube.passengers;
+package io.specmesh.blackbox;
 
+import io.specmesh.blackbox.example.shared.Currency;
 import io.specmesh.blackbox.testharness.kafka.clients.AvroSerde;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,37 +24,32 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.avro.generic.GenericRecord;
-import org.apache.kafka.common.serialization.Serde;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(fluent = true)
 @Builder
-public class Passenger {
-    private int id;
-    private long time;
-    private String username;
-    private String email;
-    private int age;
+public class Trade {
+    private String id;
+    private String detail;
+    private Currency currency;
 
-    public static Serde<Passenger> serde() {
+    public static AvroSerde<Trade> serde() {
         return new AvroSerde<>() {
             @Override
-            public Passenger convert(final Object genericRecordMaybe) {
+            public Trade convert(final Object genericRecordMaybe) {
                 if (genericRecordMaybe instanceof GenericRecord) {
                     final var record = (GenericRecord) genericRecordMaybe;
-                    return Passenger.builder()
-                            // avro parser limitation on 'int's from json (need to modify
-                            // ObjectMapper)
-                            .id(((Long) record.get("id")).intValue())
-                            .time((Long) record.get("time"))
-                            .username(record.get("username").toString())
-                            .email(record.get("email").toString())
-                            .age((Integer) record.get("age"))
+                    return Trade.builder()
+                            .id(record.get("id").toString())
+                            .detail(record.get("detail").toString())
+                            .currency(
+                                    ((AvroSerde<Currency>) Currency.serde())
+                                            .convert(record.get("currency")))
                             .build();
-                } else if (genericRecordMaybe instanceof Passenger) {
-                    return (Passenger) genericRecordMaybe;
+                } else if (genericRecordMaybe instanceof Trade) {
+                    return (Trade) genericRecordMaybe;
                 } else {
                     throw new RuntimeException("Unexpected Object:" + genericRecordMaybe);
                 }
