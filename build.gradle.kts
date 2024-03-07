@@ -270,7 +270,7 @@ subprojects {
                 from(components["java"])
 
                 artifactId = "specmesh-${artifactId}"
-                project.group = "io.specmesh"
+                project.group = "io.specmesh.blackbox"
 
                 pom {
                     name.set("${project.group}:${artifactId}")
