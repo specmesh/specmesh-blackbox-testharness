@@ -269,8 +269,8 @@ subprojects {
             create<MavenPublication>("mavenArtifacts") {
                 from(components["java"])
 
-                artifactId = "specmesh-${artifactId}"
-                project.group = "io.specmesh"
+                artifactId = "${artifactId}"
+                project.group = "io.specmesh.blackbox"
 
                 pom {
                     name.set("${project.group}:${artifactId}")
