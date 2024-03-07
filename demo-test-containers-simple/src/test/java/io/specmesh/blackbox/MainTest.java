@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.example;
+package io.specmesh.blackbox;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;

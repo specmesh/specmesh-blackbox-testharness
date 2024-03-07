@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.example.trades;
+package io.specmesh.blackbox.example.shared;
 
-import common.example.shared.Currency;
 import io.specmesh.blackbox.testharness.kafka.clients.AvroSerde;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,32 +23,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.kafka.common.serialization.Serde;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(fluent = true)
 @Builder
-public class Trade {
-    private String id;
-    private String detail;
-    private Currency currency;
+public class Currency {
+    private String symbol;
+    private double amount;
 
-    public static AvroSerde<Trade> serde() {
+    public static Serde<Currency> serde() {
         return new AvroSerde<>() {
             @Override
-            public Trade convert(final Object genericRecordMaybe) {
+            public Currency convert(final Object genericRecordMaybe) {
                 if (genericRecordMaybe instanceof GenericRecord) {
                     final var record = (GenericRecord) genericRecordMaybe;
-                    return Trade.builder()
-                            .id(record.get("id").toString())
-                            .detail(record.get("detail").toString())
-                            .currency(
-                                    ((AvroSerde<Currency>) Currency.serde())
-                                            .convert(record.get("currency")))
+                    return Currency.builder()
+                            .symbol(record.get("symbol").toString())
+                            .amount((Double) record.get("amount"))
                             .build();
-                } else if (genericRecordMaybe instanceof Trade) {
-                    return (Trade) genericRecordMaybe;
+                } else if (genericRecordMaybe instanceof Currency) {
+                    return (Currency) genericRecordMaybe;
                 } else {
                     throw new RuntimeException("Unexpected Object:" + genericRecordMaybe);
                 }

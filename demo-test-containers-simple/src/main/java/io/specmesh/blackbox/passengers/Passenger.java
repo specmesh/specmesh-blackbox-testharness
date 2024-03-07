@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package user.signedupvalue;
+package io.specmesh.blackbox.passengers;
 
 import io.specmesh.blackbox.testharness.kafka.clients.AvroSerde;
 import lombok.AllArgsConstructor;
@@ -30,30 +30,30 @@ import org.apache.kafka.common.serialization.Serde;
 @NoArgsConstructor
 @Accessors(fluent = true)
 @Builder
-public class UserSignedUp {
+public class Passenger {
     private int id;
     private long time;
-    private String fullName;
+    private String username;
     private String email;
     private int age;
 
-    public static Serde<UserSignedUp> serde() {
+    public static Serde<Passenger> serde() {
         return new AvroSerde<>() {
             @Override
-            public UserSignedUp convert(final Object genericRecordMaybe) {
+            public Passenger convert(final Object genericRecordMaybe) {
                 if (genericRecordMaybe instanceof GenericRecord) {
                     final var record = (GenericRecord) genericRecordMaybe;
-                    return UserSignedUp.builder()
-                            // avro parser limitation on 'int's' interp is borked
-                            // (would need to modify ObjectMapper with custom serializer)
+                    return Passenger.builder()
+                            // avro parser limitation on 'int's from json (need to modify
+                            // ObjectMapper)
                             .id(((Long) record.get("id")).intValue())
                             .time((Long) record.get("time"))
-                            .fullName(record.get("username").toString())
+                            .username(record.get("username").toString())
                             .email(record.get("email").toString())
                             .age((Integer) record.get("age"))
                             .build();
-                } else if (genericRecordMaybe instanceof UserSignedUp) {
-                    return (UserSignedUp) genericRecordMaybe;
+                } else if (genericRecordMaybe instanceof Passenger) {
+                    return (Passenger) genericRecordMaybe;
                 } else {
                     throw new RuntimeException("Unexpected Object:" + genericRecordMaybe);
                 }

@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package org.example;
+package io.specmesh.blackbox;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.specmesh.blackbox.passengers.Passenger;
+import io.specmesh.blackbox.signedupvalue.UserSignedUp;
 import io.specmesh.blackbox.testharness.kafka.clients.TestClients;
 import java.time.Duration;
 import java.util.Map;
@@ -26,8 +28,6 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import tube.passengers.Passenger;
-import user.signedupvalue.UserSignedUp;
 
 public class Main {
     public static void main(final String[] args) {}
