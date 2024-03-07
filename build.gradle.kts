@@ -86,7 +86,7 @@ subprojects {
     extra.apply {
         set("specmeshVersion", "0.9.2")
         set("specmeshDataGenVersion", "0.5.3")
-        set("kafkaVersion", "7.5.3-ce")
+        set("kafkaVersion", "7.6.0-ce")
         set("confluentVersion", "7.5.3")
         set("testcontainersVersion", "1.18.3")
         set("openTracingVersion", "0.33.0")
