@@ -66,24 +66,26 @@ public abstract class AvroSerde<T> implements Serde<T> {
     }
 
     public Deserializer<T> deserializer(
-            final SchemaRegistryClient client, final Map<String, ?> props, boolean isKey) {
+            final SchemaRegistryClient client, final Map<String, ?> props, final boolean isKey) {
         return (Deserializer<T>) new AvroDeserializer<>(client, props, isKey);
     }
 
     private final class AvroDeserializer<T> extends KafkaAvroDeserializer {
 
-        public AvroDeserializer() {}
+        AvroDeserializer() {}
 
-        public AvroDeserializer(final SchemaRegistryClient client) {
+        AvroDeserializer(final SchemaRegistryClient client) {
             super(client);
         }
 
-        public AvroDeserializer(final SchemaRegistryClient client, final Map<String, ?> props) {
+        AvroDeserializer(final SchemaRegistryClient client, final Map<String, ?> props) {
             super(client, props);
         }
 
-        public AvroDeserializer(
-                final SchemaRegistryClient client, final Map<String, ?> props, boolean isKey) {
+        AvroDeserializer(
+                final SchemaRegistryClient client,
+                final Map<String, ?> props,
+                final boolean isKey) {
             super(client, props, isKey);
         }
 
@@ -105,7 +107,10 @@ public abstract class AvroSerde<T> implements Serde<T> {
 
         @Override
         public Object deserialize(
-                final String topic, final Headers headers, final byte[] bytes, final Schema readerSchema) {
+                final String topic,
+                final Headers headers,
+                final byte[] bytes,
+                final Schema readerSchema) {
             return convert(super.deserialize(topic, headers, bytes, readerSchema));
         }
 
@@ -122,14 +127,21 @@ public abstract class AvroSerde<T> implements Serde<T> {
 
         @Override
         protected Object deserialize(
-                final String topic, final Boolean isKey, final byte[] payload, final Schema readerSchema)
+                final String topic,
+                final Boolean isKey,
+                final byte[] payload,
+                final Schema readerSchema)
                 throws SerializationException {
             return convert(super.deserialize(topic, isKey, payload, readerSchema));
         }
 
         @Override
         protected Object deserialize(
-                final String topic, final Boolean isKey, final Headers headers, final byte[] payload, final Schema readerSchema)
+                final String topic,
+                final Boolean isKey,
+                final Headers headers,
+                final byte[] payload,
+                final Schema readerSchema)
                 throws SerializationException {
             return convert(super.deserialize(topic, isKey, headers, payload, readerSchema));
         }
@@ -141,5 +153,5 @@ public abstract class AvroSerde<T> implements Serde<T> {
      * @param genericRecordMaybe maybe
      * @return type
      */
-    public abstract T convert(final Object genericRecordMaybe);
+    public abstract T convert(Object genericRecordMaybe);
 }

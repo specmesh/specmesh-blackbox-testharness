@@ -17,21 +17,20 @@
 package org.example;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.specmesh.blackbox.testharness.kafka.clients.TestClients;
+import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import tube.passengers.Passenger;
-import user_signed_up_value.UserSignedUp;
-
-import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import user.signedupvalue.UserSignedUp;
 
 public class Main {
-    public static void main(final String[] args) {
-    }
+    public static void main(final String[] args) {}
 
     public int doThings(final String bootstrapUrl, final String srUrl) throws Exception {
 
@@ -41,55 +40,79 @@ public class Main {
         final var username = "admin";
         final var result = new AtomicInteger();
 
-
-        try (Consumer<Integer, Passenger> consumer = consumer(bootstrapUrl, srUrl, domainId, inputTopic, username);
-             Producer<String, UserSignedUp> producer = producer(bootstrapUrl, srUrl, domainId, username)
-        ){
+        try (Consumer<Integer, Passenger> consumer =
+                        consumer(bootstrapUrl, srUrl, domainId, inputTopic, username);
+                Producer<String, UserSignedUp> producer =
+                        producer(bootstrapUrl, srUrl, domainId, username)) {
 
             final var records = consumer.poll(Duration.ofSeconds(10));
-            records.forEach(record -> {
-                producer.send(new ProducerRecord<>(
-                        outputTopic,
-                                record.key().toString(),
-                                UserSignedUp.builder()
-                                        .id(record.value().id())
-                                        .time(System.currentTimeMillis())
-                                        .age(record.value().age())
-                                        .fullName(record.value().username())
-                                        .email(record.value().email()).build()));
+            records.forEach(
+                    record -> {
+                        producer.send(
+                                new ProducerRecord<>(
+                                        outputTopic,
+                                        record.key().toString(),
+                                        UserSignedUp.builder()
+                                                .id(record.value().id())
+                                                .time(System.currentTimeMillis())
+                                                .age(record.value().age())
+                                                .fullName(record.value().username())
+                                                .email(record.value().email())
+                                                .build()));
                         try {
                             System.out.println("Transformed: " + record.value());
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
-                    }
-            );
+                    });
             result.addAndGet(records.count());
         }
         return result.get();
     }
 
-    private static Producer<String, UserSignedUp> producer(String bootstrapUrl, String srUrl, String domainId, String username) {
-        return Clients.avroProducer(
-                bootstrapUrl, srUrl, domainId, username, new StringSerializer(), UserSignedUp.class, new KafkaAvroSerializer(),
+    private static Producer<String, UserSignedUp> producer(
+            final String bootstrapUrl,
+            final String srUrl,
+            final String domainId,
+            final String username) {
+        return TestClients.avroProducer(
+                bootstrapUrl,
+                srUrl,
+                domainId,
+                username,
+                new StringSerializer(),
+                UserSignedUp.class,
+                new KafkaAvroSerializer(),
                 Map.of(
                         // change for common data types
-//                              "value.subject.name.strategy", "io.confluent.kafka.serializers.subject.RecordNameStrategy",
-//                             "value.subject.name.strategy", "io.confluent.kafka.serializers.subject.TopicRecordNameStrategy",
+                        //                              "value.subject.name.strategy",
+                        // "io.confluent.kafka.serializers.subject.RecordNameStrategy",
+                        //                             "value.subject.name.strategy",
+                        // "io.confluent.kafka.serializers.subject.TopicRecordNameStrategy",
                         // disables schema reflect and requires encoding
-//                             "schema.reflection", "false",
+                        //                             "schema.reflection", "false",
                         // enable when sending pojo -
                         "schema.reflection", "true",
                         // force schema validation on write
-                        "validate", "true")
-
-        );
+                        "validate", "true"));
     }
 
-    private static Consumer<Integer, Passenger> consumer(String bootstrapUrl, String srUrl, String domainId,
-                                                         String inputTopic, String username) throws Exception {
-        return Clients.avroConsumer(domainId, bootstrapUrl, srUrl,
-                inputTopic, username, Integer.class, new IntegerDeserializer(), Passenger.class,
+    private static Consumer<Integer, Passenger> consumer(
+            final String bootstrapUrl,
+            final String srUrl,
+            final String domainId,
+            final String inputTopic,
+            final String username)
+            throws Exception {
+        return TestClients.avroConsumer(
+                domainId,
+                bootstrapUrl,
+                srUrl,
+                inputTopic,
+                username,
+                Integer.class,
+                new IntegerDeserializer(),
+                Passenger.class,
                 Passenger.serde().deserializer());
     }
 }

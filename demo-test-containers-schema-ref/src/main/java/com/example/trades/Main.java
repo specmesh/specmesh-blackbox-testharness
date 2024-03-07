@@ -18,6 +18,7 @@ package com.example.trades;
 
 import common.example.shared.Currency;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.specmesh.blackbox.testharness.kafka.clients.TestClients;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -67,8 +68,11 @@ public class Main {
     }
 
     private static Producer<String, Trade> producer(
-            String bootstrapUrl, String srUrl, String domainId, String username) {
-        return Clients.avroProducer(
+            final String bootstrapUrl,
+            final String srUrl,
+            final String domainId,
+            final String username) {
+        return TestClients.avroProducer(
                 bootstrapUrl,
                 srUrl,
                 domainId,
@@ -91,9 +95,13 @@ public class Main {
     }
 
     private static Consumer<String, Currency> consumer(
-            String bootstrapUrl, String srUrl, String domainId, String inputTopic, String username)
+            final String bootstrapUrl,
+            final String srUrl,
+            final String domainId,
+            final String inputTopic,
+            final String username)
             throws Exception {
-        return Clients.avroConsumer(
+        return TestClients.avroConsumer(
                 domainId,
                 bootstrapUrl,
                 srUrl,

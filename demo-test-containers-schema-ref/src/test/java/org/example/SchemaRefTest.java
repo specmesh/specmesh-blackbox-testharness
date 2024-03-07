@@ -1,9 +1,26 @@
+/*
+ * Copyright 2023 SpecMesh Contributors (https://github.com/specmesh)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.example;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
-import com.example.trades.Clients;
 import com.example.trades.Main;
 import com.example.trades.Trade;
 import common.example.shared.Currency;
@@ -16,6 +33,7 @@ import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 import io.specmesh.avro.random.generator.API;
 import io.specmesh.blackbox.testharness.kafka.DockerKafkaEnvironment;
 import io.specmesh.blackbox.testharness.kafka.KafkaEnvironment;
+import io.specmesh.blackbox.testharness.kafka.clients.TestClients;
 import io.specmesh.cli.Provision;
 import io.specmesh.kafka.provision.Status;
 import java.io.IOException;
@@ -29,7 +47,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.*;
+import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,40 +75,38 @@ class SchemaRefTest {
 
     @Test
     void validateSerialisationWorksBothWays() throws Exception {
-        var currencySchemaString =
+        final var currencySchemaString =
                 Files.readString(
                         Path.of(
                                 "./build/resources/test/blackbox/schema/com.example.shared.Currency.avsc"));
-        var tradeSchemaString =
+        final var tradeSchemaString =
                 Files.readString(
                         Path.of(
                                 "./build/resources/test/blackbox/schema/com.example.trading.Trade.avsc"));
 
-        var currencySchema = new AvroSchema(currencySchemaString);
+        final var currencySchema = new AvroSchema(currencySchemaString);
 
-        Metadata metadata = new Metadata(null, null, null);
-        RuleSet ruleSet = new RuleSet(null, null);
-        AvroSchema tradeSchema =
+        final var tradeSchema =
                 new AvroSchema(
                         tradeSchemaString,
                         List.of(new SchemaReference("Currency", "com.example.shared.Currency", -1)),
                         Map.of("com.example.shared.Currency", currencySchemaString),
-                        metadata,
-                        ruleSet,
+                        new Metadata(null, null, null),
+                        new RuleSet(null, null),
                         1,
                         true);
 
-        var srClient =
+        final var srClient =
                 io.specmesh.blackbox.testharness.kafka.clients.Clients.srClient(
                         KAFKA_ENV.schemeRegistryServer());
 
         //  register both schemas prior for SerDe to work
-        int currencyId = srClient.register("com.example.shared.Currency", currencySchema);
-        int tradeId = srClient.register("com.example.trading.Trade", tradeSchema);
+        srClient.register("com.example.shared.Currency", currencySchema);
+        srClient.register("com.example.trading.Trade", tradeSchema);
 
-        var serde = Trade.serde();
+        final var serde = Trade.serde();
 
-        Serializer<Trade> serializer =
+        final Serializer<Trade> serializer =
                 serde.serializer(
                         srClient,
                         Map.of(
@@ -98,7 +116,7 @@ class SchemaRefTest {
                                 KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG,
                                 KAFKA_ENV.schemeRegistryServer()));
 
-        var payload =
+        final var payload =
                 serializer.serialize(
                         "stuff",
                         Trade.builder()
@@ -107,7 +125,7 @@ class SchemaRefTest {
                                 .currency(Currency.builder().symbol("GBP").amount(123.456).build())
                                 .build());
 
-        var stuff = serde.deserializer(srClient).deserialize("stuff", payload);
+        final var stuff = serde.deserializer(srClient).deserialize("stuff", payload);
 
         assertThat("nested Currency not found", stuff.currency(), is(notNullValue()));
         assertThat("Payment detail not passed", stuff.detail(), is("doing stuff"));
@@ -133,8 +151,8 @@ class SchemaRefTest {
         verifyTradesAreJoined(count);
     }
 
-    private static void verifyTradesAreJoined(int count) throws Exception {
-        Consumer<String, Trade> tradeConsumer =
+    private static void verifyTradesAreJoined(final int count) throws Exception {
+        final Consumer<String, Trade> tradeConsumer =
                 consumer(
                         KAFKA_ENV.kafkaBootstrapServers(),
                         KAFKA_ENV.schemeRegistryServer(),
@@ -145,8 +163,8 @@ class SchemaRefTest {
         assertThat(records.count(), is(count));
     }
 
-    private static void showThatCurrentAndPaymentAreProcessed(int count) throws Exception {
-        int result =
+    private static void showThatCurrentAndPaymentAreProcessed(final int count) throws Exception {
+        final int result =
                 new Main()
                         .doThings(
                                 KAFKA_ENV.kafkaBootstrapServers(),
@@ -166,7 +184,7 @@ class SchemaRefTest {
                                         "build/resources/test/blackbox/seed/com.example.shared.Currency.avro")));
 
         try (var producer =
-                Clients.avroProducer(
+                TestClients.avroProducer(
                         KAFKA_ENV.kafkaBootstrapServers(),
                         KAFKA_ENV.schemeRegistryServer(),
                         "com.example.trading",
@@ -216,9 +234,13 @@ class SchemaRefTest {
     }
 
     private static Consumer<String, Trade> consumer(
-            String bootstrapUrl, String srUrl, String domainId, String inputTopic, String username)
+            final String bootstrapUrl,
+            final String srUrl,
+            final String domainId,
+            final String inputTopic,
+            final String username)
             throws Exception {
-        return Clients.avroConsumer(
+        return TestClients.avroConsumer(
                 domainId,
                 bootstrapUrl,
                 srUrl,

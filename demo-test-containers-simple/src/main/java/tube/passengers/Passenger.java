@@ -40,11 +40,12 @@ public class Passenger {
     public static Serde<Passenger> serde() {
         return new AvroSerde<>() {
             @Override
-            public Passenger convert(Object genericRecordMaybe) {
+            public Passenger convert(final Object genericRecordMaybe) {
                 if (genericRecordMaybe instanceof GenericRecord) {
-                    GenericRecord record = (GenericRecord) genericRecordMaybe;
+                    final var record = (GenericRecord) genericRecordMaybe;
                     return Passenger.builder()
-                            // avro parser limitation on 'int's from json (need to modify ObjectMapper)
+                            // avro parser limitation on 'int's from json (need to modify
+                            // ObjectMapper)
                             .id(((Long) record.get("id")).intValue())
                             .time((Long) record.get("time"))
                             .username(record.get("username").toString())
@@ -58,6 +59,5 @@ public class Passenger {
                 }
             }
         };
-
     }
 }

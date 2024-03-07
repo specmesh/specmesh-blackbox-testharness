@@ -40,7 +40,7 @@ public class Trade {
             @Override
             public Trade convert(final Object genericRecordMaybe) {
                 if (genericRecordMaybe instanceof GenericRecord) {
-                    GenericRecord record = (GenericRecord) genericRecordMaybe;
+                    final var record = (GenericRecord) genericRecordMaybe;
                     return Trade.builder()
                             .id(record.get("id").toString())
                             .detail(record.get("detail").toString())

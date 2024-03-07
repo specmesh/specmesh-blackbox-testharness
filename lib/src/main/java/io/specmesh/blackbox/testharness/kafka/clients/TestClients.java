@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.example;
+package io.specmesh.blackbox.testharness.kafka.clients;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -23,16 +27,21 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-public class Clients {
+@SuppressWarnings("checkstyle:ParameterNumber")
+public final class TestClients {
+    private TestClients() {}
 
     public static <K, V> Consumer<K, V> avroConsumer(
-            String domainId, String bootstrap, String srUrl, final String topicName, final String userName,
-            Class<K> keyClass, final Deserializer<K> keyDeserializer, Class<V> valueClass,  final Deserializer<V> valueDeserializer) throws Exception {
+            final String domainId,
+            final String bootstrap,
+            final String srUrl,
+            final String topicName,
+            final String userName,
+            final Class<K> keyClass,
+            final Deserializer<K> keyDeserializer,
+            final Class<V> valueClass,
+            final Deserializer<V> valueDeserializer)
+            throws Exception {
         return consumer(
                 domainId,
                 bootstrap,
@@ -46,7 +55,6 @@ public class Clients {
                 Map.of());
     }
 
-
     private static <K, V> Consumer<K, V> consumer(
             final String domainId,
             final String boostrap,
@@ -57,12 +65,16 @@ public class Clients {
             final Class<V> valueClass,
             final Deserializer<V> valueDeserializer,
             final String userName,
-            final Map<String, Object> providedProps) throws Exception {
+            final Map<String, Object> providedProps)
+            throws Exception {
 
-        final Map<String, Object> avroProps = new HashMap<>(Map.of(
-                // change for common data types
-                // "value.subject.name.strategy", "io.confluent.kafka.serializers.subject.RecordNameStrategy",
-                "schema.reflection", "false"));
+        final Map<String, Object> avroProps =
+                new HashMap<>(
+                        Map.of(
+                                // change for common data types
+                                // "value.subject.name.strategy",
+                                // "io.confluent.kafka.serializers.subject.RecordNameStrategy",
+                                "schema.reflection", "false"));
 
         final Map<String, Object> props =
                 io.specmesh.kafka.Clients.consumerProperties(
@@ -76,28 +88,46 @@ public class Clients {
                         providedProps,
                         avroProps);
 
-        props.putAll(io.specmesh.kafka.Clients.clientSaslAuthProperties(userName, userName + "-secret"));
-        props.put(CommonClientConfigs.GROUP_ID_CONFIG, "test-consumer-" + domainId + "-" +userName + "-"+UUID.randomUUID());
+        props.putAll(
+                io.specmesh.kafka.Clients.clientSaslAuthProperties(userName, userName + "-secret"));
+        props.put(
+                CommonClientConfigs.GROUP_ID_CONFIG,
+                "test-consumer-" + domainId + "-" + userName + "-" + UUID.randomUUID());
 
         valueDeserializer.configure(props, false);
         final var consumer = new KafkaConsumer<>(props, keyDeserializer, valueDeserializer);
         consumer.subscribe(List.of(topicName));
         return consumer;
     }
-    public static <K, V> Producer<K, V> avroProducer(
 
-            String bootstrapUrl, String srUrl, final String domainId, final String user,
+    public static <K, V> Producer<K, V> avroProducer(
+            final String bootstrapUrl,
+            final String srUrl,
+            final String domainId,
+            final String user,
             final Serializer<K> keySerializer,
             final Class<V> valueClass,
             final Serializer<?> valueSerializer,
             final Map<String, Object> props) {
-        HashMap<String, Object> propsMap = new HashMap<>(Map.of(
-                // change for common data types
-                // "value.subject.name.strategy", "io.confluent.kafka.serializers.subject.RecordNameStrategy",
-                //"value.subject.name.strategy", "io.confluent.kafka.serializers.subject.TopicRecordNameStrategy",
-                "schema.reflection", "false"));
+        final HashMap<String, Object> propsMap =
+                new HashMap<>(
+                        Map.of(
+                                // change for common data types
+                                // "value.subject.name.strategy",
+                                // "io.confluent.kafka.serializers.subject.RecordNameStrategy",
+                                // "value.subject.name.strategy",
+                                // "io.confluent.kafka.serializers.subject.TopicRecordNameStrategy",
+                                "schema.reflection", "false"));
         propsMap.putAll(props);
-        return producer(domainId, bootstrapUrl, srUrl, keySerializer, valueClass, valueSerializer, user, propsMap);
+        return producer(
+                domainId,
+                bootstrapUrl,
+                srUrl,
+                keySerializer,
+                valueClass,
+                valueSerializer,
+                user,
+                propsMap);
     }
 
     private static <K, V> Producer<K, V> producer(
@@ -120,7 +150,9 @@ public class Clients {
                         false,
                         additionalProps);
 
-        props.putAll(io.specmesh.blackbox.testharness.kafka.clients.Clients.clientSaslAuthProperties(userName, userName + "-secret"));
+        props.putAll(
+                io.specmesh.blackbox.testharness.kafka.clients.Clients.clientSaslAuthProperties(
+                        userName, userName + "-secret"));
         valueSerializer.configure(props, false);
         return new KafkaProducer<>(props, keySerializer, (Serializer<V>) valueSerializer);
     }

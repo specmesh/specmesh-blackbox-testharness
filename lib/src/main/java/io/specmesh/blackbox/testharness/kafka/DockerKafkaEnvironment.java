@@ -476,6 +476,7 @@ public final class DockerKafkaEnvironment
             this.password = requireNonNull(password, "password");
         }
     }
+
     public CachedSchemaRegistryClient srClient() {
         return new CachedSchemaRegistryClient(
                 schemeRegistryServer(),
@@ -486,5 +487,4 @@ public final class DockerKafkaEnvironment
                         new JsonSchemaProvider()),
                 Map.of());
     }
-
 }
