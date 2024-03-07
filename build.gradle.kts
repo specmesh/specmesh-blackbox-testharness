@@ -143,7 +143,7 @@ subprojects {
         implementation("io.confluent:kafka-protobuf-serializer:$confluentVersion")
         implementation("io.confluent:kafka-streams-protobuf-serde:$confluentVersion")
         implementation("io.confluent:kafka-streams-avro-serde:$confluentVersion")
-        implementation("com.google.protobuf:protobuf-java:3.24.3")
+        implementation("com.google.protobuf:protobuf-java:3.25.3")
 
         implementation("org.apache.kafka:kafka-streams:$kafkaVersion")
         implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
