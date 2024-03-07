@@ -87,7 +87,7 @@ subprojects {
         set("specmeshVersion", "0.9.2")
         set("specmeshDataGenVersion", "0.5.3")
         set("kafkaVersion", "7.5.3-ce")
-        set("confluentVersion", "7.5.3")
+        set("confluentVersion", "7.6.0")
         set("testcontainersVersion", "1.18.3")
         set("openTracingVersion", "0.33.0")
         set("observabilityVersion", "1.1.8")
