@@ -29,9 +29,10 @@ import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 import io.specmesh.avro.random.generator.API;
 import io.specmesh.blackbox.example.shared.Currency;
-import io.specmesh.blackbox.testharness.kafka.DockerKafkaEnvironment;
-import io.specmesh.blackbox.testharness.kafka.KafkaEnvironment;
-import io.specmesh.blackbox.testharness.kafka.clients.TestClients;
+import io.specmesh.blackbox.kafka.DockerKafkaEnvironment;
+import io.specmesh.blackbox.kafka.KafkaEnvironment;
+import io.specmesh.blackbox.kafka.clients.Clients;
+import io.specmesh.blackbox.kafka.clients.TestClients;
 import io.specmesh.cli.Provision;
 import io.specmesh.kafka.provision.Status;
 import java.io.IOException;
@@ -94,9 +95,7 @@ class SchemaRefTest {
                         1,
                         true);
 
-        final var srClient =
-                io.specmesh.blackbox.testharness.kafka.clients.Clients.srClient(
-                        KAFKA_ENV.schemeRegistryServer());
+        final var srClient = Clients.srClient(KAFKA_ENV.schemeRegistryServer());
 
         //  register both schemas prior for SerDe to work
         srClient.register("com.example.shared.Currency", currencySchema);
