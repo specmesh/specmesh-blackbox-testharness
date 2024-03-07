@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.specmesh.blackbox.testharness.kafka.clients;
+package io.specmesh.blackbox.kafka.clients;
 
 import java.util.HashMap;
 import java.util.List;
@@ -140,7 +140,7 @@ public final class TestClients {
             final String userName,
             final Map<String, Object> additionalProps) {
         final Map<String, Object> props =
-                io.specmesh.blackbox.testharness.kafka.clients.Clients.producerProperties(
+                Clients.producerProperties(
                         domainId,
                         UUID.randomUUID().toString(),
                         bootstrapUrl,
@@ -150,9 +150,7 @@ public final class TestClients {
                         false,
                         additionalProps);
 
-        props.putAll(
-                io.specmesh.blackbox.testharness.kafka.clients.Clients.clientSaslAuthProperties(
-                        userName, userName + "-secret"));
+        props.putAll(Clients.clientSaslAuthProperties(userName, userName + "-secret"));
         valueSerializer.configure(props, false);
         return new KafkaProducer<>(props, keySerializer, (Serializer<V>) valueSerializer);
     }

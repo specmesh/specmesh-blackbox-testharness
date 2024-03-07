@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.specmesh.blackbox.testharness.kafka;
+package io.specmesh.blackbox.kafka;
 
 import static java.util.Objects.requireNonNull;
 
@@ -22,8 +22,8 @@ import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.json.JsonSchemaProvider;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
-import io.specmesh.blackbox.testharness.kafka.clients.Clients;
-import io.specmesh.blackbox.testharness.kafka.schema.SchemaRegistryContainer;
+import io.specmesh.blackbox.kafka.clients.Clients;
+import io.specmesh.blackbox.kafka.schema.SchemaRegistryContainer;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.HashMap;

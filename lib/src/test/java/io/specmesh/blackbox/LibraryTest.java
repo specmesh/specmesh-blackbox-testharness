@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.specmesh.blackbox.testharness;
+package io.specmesh.blackbox;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.specmesh.blackbox.testharness.kafka.clients;
+package io.specmesh.blackbox.kafka.clients;
 
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;

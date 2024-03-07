@@ -16,7 +16,7 @@
 
 package io.specmesh.blackbox.signedupvalue;
 
-import io.specmesh.blackbox.testharness.kafka.clients.AvroSerde;
+import io.specmesh.blackbox.kafka.clients.AvroSerde;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

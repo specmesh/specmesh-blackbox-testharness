@@ -18,7 +18,7 @@ package io.specmesh.blackbox;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import io.specmesh.blackbox.example.shared.Currency;
-import io.specmesh.blackbox.testharness.kafka.clients.TestClients;
+import io.specmesh.blackbox.kafka.clients.TestClients;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;

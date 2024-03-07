@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.specmesh.blackbox.testharness.kafka.schema;
+package io.specmesh.blackbox.kafka.schema;
 
 import java.net.MalformedURLException;
 import java.net.URL;

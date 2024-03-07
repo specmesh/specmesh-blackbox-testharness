@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.specmesh.blackbox.testharness;
+package io.specmesh.blackbox;
 
 public class Library {
     public boolean someLibraryMethod() {

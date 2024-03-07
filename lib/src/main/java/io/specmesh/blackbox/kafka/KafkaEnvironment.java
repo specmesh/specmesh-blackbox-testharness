@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.specmesh.blackbox.testharness.kafka;
+package io.specmesh.blackbox.kafka;
 
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import org.apache.kafka.clients.admin.Admin;

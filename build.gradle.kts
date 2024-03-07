@@ -24,7 +24,7 @@ plugins {
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
 
 }
-group = "io.specmesh"
+group = "io.specmesh.blackbox"
 project.version = scmVersion.version
 version = scmVersion.version
 

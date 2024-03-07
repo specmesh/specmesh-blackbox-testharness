@@ -23,9 +23,10 @@ import static org.hamcrest.Matchers.is;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import io.specmesh.avro.random.generator.API;
-import io.specmesh.blackbox.testharness.kafka.DockerKafkaEnvironment;
-import io.specmesh.blackbox.testharness.kafka.KafkaEnvironment;
-import io.specmesh.blackbox.testharness.kafka.clients.TestClients;
+import io.specmesh.blackbox.kafka.DockerKafkaEnvironment;
+import io.specmesh.blackbox.kafka.KafkaEnvironment;
+import io.specmesh.blackbox.kafka.clients.Clients;
+import io.specmesh.blackbox.kafka.clients.TestClients;
 import io.specmesh.cli.Provision;
 import io.specmesh.kafka.provision.Status;
 import java.io.IOException;
@@ -86,9 +87,7 @@ class MainTest {
     }
 
     private static void sanityCheckSchemaCreation() throws IOException, RestClientException {
-        try (var srClient =
-                io.specmesh.blackbox.testharness.kafka.clients.Clients.srClient(
-                        KAFKA_ENV.schemeRegistryServer())) {
+        try (var srClient = Clients.srClient(KAFKA_ENV.schemeRegistryServer())) {
             final var allSubjects = srClient.getAllSubjects();
             assertThat("Should be 2 schemas in 2 subjects", allSubjects, hasSize(2));
             allSubjects.forEach(
